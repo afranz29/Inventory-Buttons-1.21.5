@@ -3,6 +3,7 @@ package com.panda.inventorybuttons.gui;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.panda.inventorybuttons.InventoryButtons;
+import com.panda.inventorybuttons.util.HypixelItemManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -138,6 +139,17 @@ public class GuiInvButtonEditor extends Screen {
         public String getConfigId() { return textureId.toString(); }
     }
 
+    private record HypixelResult(HypixelItemManager.HypixelItem item) implements IconResult {
+        @Override
+        public void render(DrawContext context, int x, int y) {
+            context.drawItem(item.iconStack(), x, y);
+        }
+        @Override
+        public String getDisplayName() { return item.name(); }
+        @Override
+        public String getConfigId() { return item.configId(); }
+    }
+
     private final Screen parent;
     private final int xSize = 176;
     private final int ySize = 166;
@@ -170,7 +182,7 @@ public class GuiInvButtonEditor extends Screen {
     private long actionStatusEndTime = 0;
 
     public GuiInvButtonEditor(Screen parent) {
-        super(Text.literal("NEU Button Editor Port"));
+        super(Text.literal("Inventory Buttons (NEU Button Port)"));
         this.parent = parent;
     }
 
@@ -214,6 +226,8 @@ public class GuiInvButtonEditor extends Screen {
 
         search("");
     }
+
+
 
     private void updateEditorCoordinates() {
         if (editingButton == null) return;
@@ -594,6 +608,7 @@ public class GuiInvButtonEditor extends Screen {
         searchedIcons.clear();
         String lower = query.toLowerCase().trim();
 
+        // Hardcoded Skulls
         if (currentMode == FilterMode.ALL || currentMode == FilterMode.SKULLS) {
             for (Map.Entry<String, String> entry : SKULL_ICONS.entrySet()) {
                 if (entry.getKey().toLowerCase().contains(lower)) {
@@ -602,8 +617,17 @@ public class GuiInvButtonEditor extends Screen {
                     searchedIcons.add(new ItemStackResult(skullStack));
                 }
             }
+            // Hypixel Skulls
+            synchronized (HypixelItemManager.SKULL_ITEMS) {
+                for (HypixelItemManager.HypixelItem hItem : HypixelItemManager.SKULL_ITEMS) {
+                    if (hItem.name().toLowerCase().contains(lower)) {
+                        searchedIcons.add(new HypixelResult(hItem));
+                    }
+                }
+            }
         }
 
+        // Custom Textures
         if (currentMode == FilterMode.ALL || currentMode == FilterMode.MISC) {
             for (Map.Entry<String, Identifier> entry : InventoryButtons.CUSTOM_TEXTURES.entrySet()) {
                 if (entry.getKey().toLowerCase().contains(lower)) {
@@ -612,6 +636,7 @@ public class GuiInvButtonEditor extends Screen {
             }
         }
 
+        // Vanilla Items
         if (currentMode == FilterMode.ALL || currentMode == FilterMode.ITEMS || currentMode == FilterMode.BLOCKS) {
             for (Item item : Registries.ITEM) {
                 boolean isBlock = item instanceof BlockItem;
@@ -626,11 +651,16 @@ public class GuiInvButtonEditor extends Screen {
             }
         }
 
-        searchedIcons.sort(Comparator.comparing(r -> {
-            String name = r.getDisplayName().toLowerCase();
-            if (name.startsWith(lower)) return "0" + name;
-            return "1" + name;
-        }));
+        searchedIcons.sort(
+            Comparator.comparing((IconResult r) -> {
+                String name = r.getDisplayName().toLowerCase();
+                return name.startsWith(lower) ? 0 : 1;
+            })
+            .thenComparingInt(r -> {
+                return (r instanceof HypixelResult) ? 1 : 0;
+            })
+            .thenComparing(r -> r.getDisplayName().toLowerCase())
+        );
     }
 
     @Override
