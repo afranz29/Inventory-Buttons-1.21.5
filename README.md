@@ -1,12 +1,14 @@
 # Inventory Buttons (Unofficial Port)
 
-A Fabric mod for Minecraft 1.21.5 that brings the popular "Inventory Buttons" feature from [NotEnoughUpdates (NEU)](https://github.com/NotEnoughUpdates/NotEnoughUpdates) to modern versions of Minecraft.
+A Fabric mod for Minecraft that brings the popular "Inventory Buttons" feature from [NotEnoughUpdates (NEU)](https://github.com/NotEnoughUpdates/NotEnoughUpdates) to modern versions of Minecraft.
+
+This mod is available for **1.21.11** and **1.21.5**
 
 ## Features
 
 * **Quick Inventory Access:** Add customizable buttons to your inventory and chest GUIs for quick actions.
 * **Editor Mode:** Easily move and configure buttons to suit your playstyle.
-* **Fabric Port:** Native support for Minecraft 1.21.5 using the Fabric Mod Loader.
+* **Fabric Port:** Native support for Minecraft 1.21.11 or 1.21.5 using the Fabric Mod Loader.
 
 ## Installation
 
@@ -19,8 +21,8 @@ _For more information about installing Fabric_
 
 ### Install Inventory Buttons Mod
 1.  Download the latest `.jar` file from the [Releases](https://github.com/afranz29/Inventory-Buttons/releases) page.
-3.  Place the downloaded `.jar` file into your `.minecraft/mods` folder.
-4.  Launch the game!
+2. Place the downloaded `.jar` file into your `.minecraft/mods` folder.
+3. Launch the game!
 
 ## Credits & Attribution
 
